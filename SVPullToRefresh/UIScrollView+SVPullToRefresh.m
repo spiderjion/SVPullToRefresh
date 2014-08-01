@@ -652,10 +652,12 @@ static char UIScrollViewPullToRefreshView;
         case SVPullToRefreshStateLoading:
             [self setScrollViewContentInsetForLoading];
             
-            dispatch_time_t t = dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC);
-            dispatch_after(t, dispatch_get_main_queue(), ^{
-                if(previousState == SVPullToRefreshStateTriggered && pullToRefreshActionHandler)
-                    pullToRefreshActionHandler();
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                dispatch_time_t t = dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC);
+                dispatch_after(t, dispatch_get_main_queue(), ^{
+                    if(previousState == SVPullToRefreshStateTriggered && pullToRefreshActionHandler)
+                        pullToRefreshActionHandler();
+                });
             });
             
             break;
